@@ -1,0 +1,44 @@
+local RunService = game:GetService("RunService")
+local player = game.Players.LocalPlayer
+
+-- Variable to control the toggle state
+local isActive = true  -- Default to true; set to false when the toggle in the hub is turned off
+
+-- Function to check and destroy parts
+local function checkAndDestroyParts()
+    local partsToCheck = {
+        "Freeze",
+        "StopRunning",
+        "ComboStun",
+        "RagdollSim",
+        "Slowed"
+    }
+
+    for _, partName in ipairs(partsToCheck) do
+        local part = player.Character:FindFirstChild(partName)
+        if part then
+            part:Destroy()
+            print(partName .. " has been destroyed.")
+        else
+            print(partName .. " not found!")
+        end
+    end
+end
+
+-- Connect the function to the Heartbeat event
+RunService.Heartbeat:Connect(function()
+    if isActive then  -- Check if the toggle is active
+        checkAndDestroyParts()
+    else
+        print("Script is inactive. Waiting for toggle to be turned on.")
+    end
+end)
+
+-- Assuming Options.MyToggle is defined and represents the toggle in the hub
+Options.MyToggle:OnChanged(function()
+    isActive = Options.MyToggle.Value  -- Update isActive based on the toggle's value
+    print("Script is now " .. (isActive and "active." or "inactive."))
+end)
+
+-- Initialize the toggle state based on its current value
+isActive = Options.MyToggle.Value
